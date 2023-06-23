@@ -10,7 +10,7 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
-        <script src="{{ asset( 'build/assets/app-cc4e2fca.js' ) }}" defer></script>
+        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     </head>
     <body>
         <div class="container">

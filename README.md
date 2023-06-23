@@ -14,6 +14,7 @@ Django      - Pages
 ```
 
 Services description:
+Altough services are designed to work with API Gateway and Django, they can be also run independently with their own UI.
 ```
 @Laravel
     -> Discounts
@@ -39,4 +40,11 @@ Services flow:
 ```
 @Authenticated user
 @Unauthenticated
+```
+
+Services workflow:
+```
+@Laravel
+- docker-compose up
+- npm run watch
 ```
