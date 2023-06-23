@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip \
-    unzip
+    unzip \
+    npm
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -22,7 +23,9 @@ RUN useradd -G www-data,root -u $uid -d /home/$user $user
 RUN mkdir -p /home/$user/.composer && \
     chown -R $user:$user /home/$user
 
+RUN npm install npm@9.5.1 -g && \
+    npm install n -g
+
 WORKDIR /var/www
 
 USER $user
-

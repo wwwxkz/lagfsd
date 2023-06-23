@@ -1,5 +1,10 @@
 @extends('layouts.app')
 @section('content')
+    <Example></Example>
+    <example></example>
+    <example-component></example-component>
+    <div id="example"></div>
+    <div id="example-component"></div>
     <h1>Create product</h1>
     <div>
         @if ($errors->any())
