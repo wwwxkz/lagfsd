@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import axios from 'axios';
 
 const Main = () => {
+    const [updateProducts, setUpdateProducts] = useState(true);
     const [form, setForm] = useState({
         name: '',
         location: '',
@@ -13,13 +14,28 @@ const Main = () => {
 
     const [products, setProducts] = useState([]);
 
-    function handleSubmit(e) {
+    useEffect(() => {
+        getProducts();
+    }, [updateProducts]);
+
+    const getProducts = async () => {
+        try {
+            const response = await axios.get('/api/product');
+            setProducts(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleSubmit = (e) => {
         e.preventDefault();
         axios.post('/api/product', form)
-            .then(function (response) {
+            .then((response) => {
                 console.log(response.data);
+                setUpdateProducts(!updateProducts);
+                document.getElementsByClassName("btn-close")[0].click();
             })
-            .catch(function (error) {
+            .catch((error) => {
                 console.log(error);
             });
         setForm({
@@ -31,27 +47,28 @@ const Main = () => {
         });
     }
 
-    useEffect(() => {
-        getProducts();
-    }, []);
-
-    const getProducts = async () => {
-        try {
-            const response = await axios.get('/api/product');
-            setProducts(response.data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    const deleteProduct = (id) => {
+        axios.delete(`/api/product/${id}`)
+            .then((response) => {
+                console.log(response);
+                setUpdateProducts(!updateProducts);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
 
     return (
         <div className="container">
             <div className="row justify-content-center">
                 <div className="col-md-7">
-                    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="addProductModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <div className="modal-header">Add product</div>
+                                <div className="modal-header">
+                                    Add product
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
                                 <div className="modal-body">
                                     <form onSubmit={handleSubmit}>
                                         <div class="d-flex flex-column">
@@ -135,7 +152,7 @@ const Main = () => {
                                 Add product
                             </button>
                         </div>
-                        <div className="card-body d-flex flex-row justify-content-between">
+                        <div className="card-body d-flex flex-row flex-wrap justify-content-between">
                             {products.map((product, index) => {
                                 return (
                                     <div key={index}>
@@ -146,7 +163,7 @@ const Main = () => {
                                         <h6>Description: {product.description}</h6>
                                         <div className="d-flex flex-column gap-2">
                                             <input className="btn btn-primary" value="Edit" />
-                                            <input className="btn btn-danger" value="Delete" />
+                                            <input className="btn btn-danger" value="Delete" onClick={() => {deleteProduct(product.id)} }/>
                                         </div>
                                         <hr />
                                     </div>
