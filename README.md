@@ -1,4 +1,4 @@
-# laravel-woocommerce
+# LAGFSD (Laravel, Aspnet, Gin, Flask, Springboot, Django)
 
 Services:
 Altough services are designed to work with API Gateway and Django, they can be also run independently with their own UI.
