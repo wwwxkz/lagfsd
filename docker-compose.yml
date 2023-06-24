@@ -1,24 +1,34 @@
 version: "3.7"
 services:
-  app:
+  laravel:
     build:
       args:
         user: wwwxkz
         uid: 1000
-      context: ./
+      context: ./laravel
       dockerfile: Dockerfile
-    image: laravel-woocommerce
-    container_name: laravel-woocommerce-app
+    image: lagfsd-laravel
+    container_name: lagfsd-laravel
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
-      - ./:/var/www
+      - ./laravel:/var/www
     networks:
-      - laravel-woocommerce
+      - lagfsd
+
+  aspnet:
+    container_name: lagfsd-aspnet
+    image: "mcr.microsoft.com/dotnet/sdk:7.0"
+    # depends_on: [ db ]
+    # volumes:
+    #   - ./:/app
+    # command: dotnet watch --project ./app run --urls "http://0.0.0.0:80"    
+    ports:
+      - "8081:80"
 
   db:
     image: mysql:8.0
-    container_name: laravel-woocommerce-db
+    container_name: lagfsd-db
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -30,20 +40,20 @@ services:
     volumes:
       - ./docker-compose/mysql:/docker-entrypoint-initdb.d
     networks:
-      - laravel-woocommerce
+      - lagfsd
 
   nginx:
     image: nginx:alpine
-    container_name: laravel-woocommerce-nginx
+    container_name: lagfsd-nginx
     restart: unless-stopped
     ports:
       - 8000:80
     volumes:
-      - ./:/var/www
+      - ./laravel:/var/www
       - ./docker-compose/nginx:/etc/nginx/conf.d/
     networks:
-      - laravel-woocommerce
+      - lagfsd
 
 networks:
-  laravel-woocommerce:
+  lagfsd:
     driver: bridge
