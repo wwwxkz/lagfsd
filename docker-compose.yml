@@ -1,34 +1,24 @@
 version: "3.7"
 services:
   laravel:
+    container_name: lagfsd-laravel
+    image: lagfsd-laravel
+    restart: unless-stopped
+    working_dir: /var/www/
     build:
       args:
         user: wwwxkz
         uid: 1000
       context: ./laravel
       dockerfile: Dockerfile
-    image: lagfsd-laravel
-    container_name: lagfsd-laravel
-    restart: unless-stopped
-    working_dir: /var/www/
     volumes:
       - ./laravel:/var/www
     networks:
       - lagfsd
 
-  aspnet:
-    container_name: lagfsd-aspnet
-    image: "mcr.microsoft.com/dotnet/sdk:7.0"
-    # depends_on: [ db ]
-    # volumes:
-    #   - ./:/app
-    # command: dotnet watch --project ./app run --urls "http://0.0.0.0:80"    
-    ports:
-      - "8081:80"
-
-  db:
+  laravel-db:
+    container_name: lagfsd-laravel-db
     image: mysql:8.0
-    container_name: lagfsd-db
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -38,13 +28,37 @@ services:
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     volumes:
-      - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+      - ./docker-compose/laravel-db:/docker-entrypoint-initdb.d
+    networks:
+      - lagfsd
+
+  aspnet:
+    container_name: lagfsd-aspnet
+    image: "mcr.microsoft.com/dotnet/sdk:7.0"
+    restart: unless-stopped
+    volumes:
+      - ./aspnet:/app
+    command: dotnet watch --project ./app run --urls "http://0.0.0.0:80"    
+    ports:
+      - "8081:80"
+    networks:
+      - lagfsd
+
+  aspnet-db:
+    container_name: lagfsd-aspnet-db
+    image: "mcr.microsoft.com/mssql/server"
+    restart: unless-stopped    
+    environment:
+      SA_PASSWORD: ${SA_PASSWORD}
+      ACCEPT_EULA: ${ACCEPT_EULA}
+    ports:
+      - "11433:1433" 
     networks:
       - lagfsd
 
   nginx:
-    image: nginx:alpine
     container_name: lagfsd-nginx
+    image: nginx:alpine
     restart: unless-stopped
     ports:
       - 8000:80
