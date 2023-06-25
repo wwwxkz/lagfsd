@@ -1,8 +1,8 @@
 version: "3.7"
 services:
   laravel:
-    container_name: lagfsd-laravel
-    image: lagfsd-laravel
+    container_name: laravel
+    image: laravel
     restart: unless-stopped
     working_dir: /var/www/
     build:
@@ -17,14 +17,14 @@ services:
       - lagfsd
 
   laravel-db:
-    container_name: lagfsd-laravel-db
+    container_name: laravel-db
     image: mysql:8.0
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_DATABASE: ${LARAVEL_DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${LARAVEL_DB_PASSWORD}
+      MYSQL_PASSWORD: ${LARAVEL_DB_PASSWORD}
+      MYSQL_USER: ${LARAVEL_DB_USERNAME}
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     volumes:
@@ -32,36 +32,137 @@ services:
     networks:
       - lagfsd
 
-  aspnet:
-    container_name: lagfsd-aspnet
-    image: "mcr.microsoft.com/dotnet/sdk:7.0"
+  # aspnet:
+  #   container_name: aspnet
+  #   image: "mcr.microsoft.com/dotnet/sdk:7.0"
+  #   restart: unless-stopped
+  #   command: dotnet watch --project ./app run --urls "http://0.0.0.0:80"
+  #   volumes:
+  #     - ./aspnet:/app
+  #   ports:
+  #     - "8081:80"
+  #   networks:
+  #     - lagfsd
+
+  # aspnet-db:
+  #   container_name: aspnet-db
+  #   image: "mcr.microsoft.com/mssql/server"
+  #   restart: unless-stopped    
+  #   environment:
+  #     SA_PASSWORD: ${SA_PASSWORD}
+  #     ACCEPT_EULA: ${ACCEPT_EULA}
+  #   ports:
+  #     - "11433:1433" 
+  #   networks:
+  #     - lagfsd
+
+  # springboot:
+  #   container_name: springboot
+  #   image: springboot
+  #   restart: unless-stopped
+  #   working_dir: /var/www/
+  #   build:
+  #     context: ./springboot
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./springboot:/app
+  #   ports:
+  #       - 8888:8888
+  #       - 8000:8000
+  #       - 80:80
+  #   networks:
+  #       - lagfsd
+
+  # springboot-db:
+  #   container_name: springboot-db
+  #   image: mysql:8.0
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_DATABASE: ${SPRINGBOOT_DB_DATABASE}
+  #     MYSQL_ROOT_PASSWORD: ${SPRINGBOOT_DB_PASSWORD}
+  #     MYSQL_PASSWORD: ${SPRINGBOOT_DB_PASSWORD}
+  #     MYSQL_USER: ${SPRINGBOOT_DB_USERNAME}
+  #     SERVICE_TAGS: dev
+  #     SERVICE_NAME: mysql
+  #   volumes:
+  #     - ./docker-compose/springboot-db:/docker-entrypoint-initdb.d
+  #   networks:
+  #     - lagfsd
+
+  # gin-db:
+  #   container_name: gin-db
+  #   image: mysql:8.0
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_DATABASE: ${GIN_DB_DATABASE}
+  #     MYSQL_ROOT_PASSWORD: ${GIN_DB_PASSWORD}
+  #     MYSQL_PASSWORD: ${GIN_DB_PASSWORD}
+  #     MYSQL_USER: ${GIN_DB_USERNAME}
+  #     SERVICE_TAGS: dev
+  #     SERVICE_NAME: mysql
+  #   volumes:
+  #     - ./docker-compose/gin-db:/docker-entrypoint-initdb.d
+  #   networks:
+  #     - lagfsd
+
+  flask:
+    container_name: flask
+    image: flask
     restart: unless-stopped
+    working_dir: /var/www/
+    build:
+      args:
+        user: wwwxkz
+        uid: 1000
+      context: ./flask
+      dockerfile: Dockerfile
+    depends_on:
+      - flask-db
     volumes:
-      - ./aspnet:/app
-    command: dotnet watch --project ./app run --urls "http://0.0.0.0:80"    
+      - ./flask:/var/www
     ports:
-      - "8081:80"
+      - 8004:5000
     networks:
       - lagfsd
 
-  aspnet-db:
-    container_name: lagfsd-aspnet-db
-    image: "mcr.microsoft.com/mssql/server"
-    restart: unless-stopped    
+  flask-db:
+    container_name: flask-db
+    image: mysql:8.0
+    restart: unless-stopped
     environment:
-      SA_PASSWORD: ${SA_PASSWORD}
-      ACCEPT_EULA: ${ACCEPT_EULA}
-    ports:
-      - "11433:1433" 
+      MYSQL_DATABASE: ${FLASK_DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${FLASK_DB_PASSWORD}
+      MYSQL_PASSWORD: ${FLASK_DB_PASSWORD}
+      MYSQL_USER: ${FLASK_DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./docker-compose/flask-db:/docker-entrypoint-initdb.d
     networks:
       - lagfsd
+
+  # django-db:
+  #   container_name: django-db
+  #   image: mysql:8.0
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_DATABASE: ${DJANGO_DB_DATABASE}
+  #     MYSQL_ROOT_PASSWORD: ${DJANGO_DB_PASSWORD}
+  #     MYSQL_PASSWORD: ${DJANGO_DB_PASSWORD}
+  #     MYSQL_USER: ${DJANGO_DB_USERNAME}
+  #     SERVICE_TAGS: dev
+  #     SERVICE_NAME: mysql
+  #   volumes:
+  #     - ./docker-compose/django-db:/docker-entrypoint-initdb.d
+  #   networks:
+  #     - lagfsd
 
   nginx:
-    container_name: lagfsd-nginx
+    container_name: nginx
     image: nginx:alpine
     restart: unless-stopped
     ports:
-      - 8000:80
+      - 8001:80
     volumes:
       - ./laravel:/var/www
       - ./docker-compose/nginx:/etc/nginx/conf.d/
