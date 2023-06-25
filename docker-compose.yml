@@ -1,36 +1,36 @@
 version: "3.7"
 services:
-  laravel:
-    container_name: laravel
-    image: laravel
-    restart: unless-stopped
-    working_dir: /var/www/
-    build:
-      args:
-        user: wwwxkz
-        uid: 1000
-      context: ./laravel
-      dockerfile: Dockerfile
-    volumes:
-      - ./laravel:/var/www
-    networks:
-      - lagfsd
+  # laravel:
+  #   container_name: laravel
+  #   image: laravel
+  #   restart: unless-stopped
+  #   working_dir: /var/www/
+  #   build:
+  #     args:
+  #       user: wwwxkz
+  #       uid: 1000
+  #     context: ./laravel
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./laravel:/var/www
+  #   networks:
+  #     - lagfsd
 
-  laravel-db:
-    container_name: laravel-db
-    image: mysql:8.0
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: ${LARAVEL_DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${LARAVEL_DB_PASSWORD}
-      MYSQL_PASSWORD: ${LARAVEL_DB_PASSWORD}
-      MYSQL_USER: ${LARAVEL_DB_USERNAME}
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
-    volumes:
-      - ./docker-compose/laravel-db:/docker-entrypoint-initdb.d
-    networks:
-      - lagfsd
+  # laravel-db:
+  #   container_name: laravel-db
+  #   image: mysql:8.0
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_DATABASE: ${LARAVEL_DB_DATABASE}
+  #     MYSQL_ROOT_PASSWORD: ${LARAVEL_DB_PASSWORD}
+  #     MYSQL_PASSWORD: ${LARAVEL_DB_PASSWORD}
+  #     MYSQL_USER: ${LARAVEL_DB_USERNAME}
+  #     SERVICE_TAGS: dev
+  #     SERVICE_NAME: mysql
+  #   volumes:
+  #     - ./docker-compose/laravel-db:/docker-entrypoint-initdb.d
+  #   networks:
+  #     - lagfsd
 
   # aspnet:
   #   container_name: aspnet
@@ -89,57 +89,75 @@ services:
   #   networks:
   #     - lagfsd
 
-  # gin-db:
-  #   container_name: gin-db
-  #   image: mysql:8.0
-  #   restart: unless-stopped
-  #   environment:
-  #     MYSQL_DATABASE: ${GIN_DB_DATABASE}
-  #     MYSQL_ROOT_PASSWORD: ${GIN_DB_PASSWORD}
-  #     MYSQL_PASSWORD: ${GIN_DB_PASSWORD}
-  #     MYSQL_USER: ${GIN_DB_USERNAME}
-  #     SERVICE_TAGS: dev
-  #     SERVICE_NAME: mysql
-  #   volumes:
-  #     - ./docker-compose/gin-db:/docker-entrypoint-initdb.d
-  #   networks:
-  #     - lagfsd
-
-  flask:
-    container_name: flask
-    image: flask
+  gin:
+    container_name: gin
+    image: gin
     restart: unless-stopped
     working_dir: /var/www/
     build:
       args:
         user: wwwxkz
         uid: 1000
-      context: ./flask
+      context: ./gin
       dockerfile: Dockerfile
-    depends_on:
-      - flask-db
     volumes:
-      - ./flask:/var/www
+      - ./gin:/var/www
     ports:
-      - 8004:5000
+      - 8003:8000
     networks:
       - lagfsd
 
-  flask-db:
-    container_name: flask-db
+  gin-db:
+    container_name: gin-db
     image: mysql:8.0
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${FLASK_DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${FLASK_DB_PASSWORD}
-      MYSQL_PASSWORD: ${FLASK_DB_PASSWORD}
-      MYSQL_USER: ${FLASK_DB_USERNAME}
+      MYSQL_DATABASE: ${GIN_DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${GIN_DB_PASSWORD}
+      MYSQL_PASSWORD: ${GIN_DB_PASSWORD}
+      MYSQL_USER: ${GIN_DB_USERNAME}
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     volumes:
-      - ./docker-compose/flask-db:/docker-entrypoint-initdb.d
+      - ./docker-compose/gin-db:/docker-entrypoint-initdb.d
     networks:
       - lagfsd
+
+  # flask:
+  #   container_name: flask
+  #   image: flask
+  #   restart: unless-stopped
+  #   working_dir: /var/www/
+  #   build:
+  #     args:
+  #       user: wwwxkz
+  #       uid: 1000
+  #     context: ./flask
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - flask-db
+  #   volumes:
+  #     - ./flask:/var/www
+  #   ports:
+  #     - 8004:5000
+  #   networks:
+  #     - lagfsd
+
+  # flask-db:
+  #   container_name: flask-db
+  #   image: mysql:8.0
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_DATABASE: ${FLASK_DB_DATABASE}
+  #     MYSQL_ROOT_PASSWORD: ${FLASK_DB_PASSWORD}
+  #     MYSQL_PASSWORD: ${FLASK_DB_PASSWORD}
+  #     MYSQL_USER: ${FLASK_DB_USERNAME}
+  #     SERVICE_TAGS: dev
+  #     SERVICE_NAME: mysql
+  #   volumes:
+  #     - ./docker-compose/flask-db:/docker-entrypoint-initdb.d
+  #   networks:
+  #     - lagfsd
 
   # django-db:
   #   container_name: django-db
@@ -157,17 +175,17 @@ services:
   #   networks:
   #     - lagfsd
 
-  nginx:
-    container_name: nginx
-    image: nginx:alpine
-    restart: unless-stopped
-    ports:
-      - 8001:80
-    volumes:
-      - ./laravel:/var/www
-      - ./docker-compose/nginx:/etc/nginx/conf.d/
-    networks:
-      - lagfsd
+  # nginx:
+  #   container_name: nginx
+  #   image: nginx:alpine
+  #   restart: unless-stopped
+  #   ports:
+  #     - 8001:80
+  #   volumes:
+  #     - ./laravel:/var/www
+  #     - ./docker-compose/nginx:/etc/nginx/conf.d/
+  #   networks:
+  #     - lagfsd
 
 networks:
   lagfsd:
