@@ -89,39 +89,39 @@ services:
   #   networks:
   #     - lagfsd
 
-  gin:
-    container_name: gin
-    image: gin
-    restart: unless-stopped
-    working_dir: /var/www/
-    build:
-      args:
-        user: wwwxkz
-        uid: 1000
-      context: ./gin
-      dockerfile: Dockerfile
-    volumes:
-      - ./gin:/var/www
-    ports:
-      - 8003:8000
-    networks:
-      - lagfsd
+  # gin:
+  #   container_name: gin
+  #   image: gin
+  #   restart: unless-stopped
+  #   working_dir: /var/www/
+  #   build:
+  #     args:
+  #       user: wwwxkz
+  #       uid: 1000
+  #     context: ./gin
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./gin:/var/www
+  #   ports:
+  #     - 8003:8000
+  #   networks:
+  #     - lagfsd
 
-  gin-db:
-    container_name: gin-db
-    image: mysql:8.0
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: ${GIN_DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${GIN_DB_PASSWORD}
-      MYSQL_PASSWORD: ${GIN_DB_PASSWORD}
-      MYSQL_USER: ${GIN_DB_USERNAME}
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
-    volumes:
-      - ./docker-compose/gin-db:/docker-entrypoint-initdb.d
-    networks:
-      - lagfsd
+  # gin-db:
+  #   container_name: gin-db
+  #   image: mysql:8.0
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_DATABASE: ${GIN_DB_DATABASE}
+  #     MYSQL_ROOT_PASSWORD: ${GIN_DB_PASSWORD}
+  #     MYSQL_PASSWORD: ${GIN_DB_PASSWORD}
+  #     MYSQL_USER: ${GIN_DB_USERNAME}
+  #     SERVICE_TAGS: dev
+  #     SERVICE_NAME: mysql
+  #   volumes:
+  #     - ./docker-compose/gin-db:/docker-entrypoint-initdb.d
+  #   networks:
+  #     - lagfsd
 
   # flask:
   #   container_name: flask
@@ -156,6 +156,27 @@ services:
   #     SERVICE_NAME: mysql
   #   volumes:
   #     - ./docker-compose/flask-db:/docker-entrypoint-initdb.d
+  #   networks:
+  #     - lagfsd
+
+  # django:
+  #   container_name: django
+  #   image: django
+  #   restart: unless-stopped
+  #   working_dir: /var/www/
+  #   command: python manage.py runserver 0.0.0.0:8000
+  #   build:
+  #     args:
+  #       user: wwwxkz
+  #       uid: 1000
+  #     context: ./django
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - django-db
+  #   volumes:
+  #     - ./django:/var/www
+  #   ports:
+  #     - 8000:8000
   #   networks:
   #     - lagfsd
 
