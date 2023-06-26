@@ -32,17 +32,17 @@ services:
   #   networks:
   #     - lagfsd
 
-  # aspnet:
-  #   container_name: aspnet
-  #   image: "mcr.microsoft.com/dotnet/sdk:7.0"
-  #   restart: unless-stopped
-  #   command: dotnet watch --project ./app run --urls "http://0.0.0.0:80"
-  #   volumes:
-  #     - ./aspnet:/app
-  #   ports:
-  #     - "8081:80"
-  #   networks:
-  #     - lagfsd
+  aspnet:
+    container_name: aspnet
+    image: "mcr.microsoft.com/dotnet/sdk:7.0"
+    restart: unless-stopped
+    command: dotnet watch --project ./app run --urls "http://0.0.0.0:80"
+    volumes:
+      - ./aspnet/webapi:/app
+    ports:
+      - "8002:80"
+    networks:
+      - lagfsd
 
   # aspnet-db:
   #   container_name: aspnet-db
