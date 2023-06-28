@@ -32,17 +32,17 @@ services:
   #   networks:
   #     - lagfsd
 
-  aspnet:
-    container_name: aspnet
-    image: "mcr.microsoft.com/dotnet/sdk:7.0"
-    restart: unless-stopped
-    command: dotnet watch --project ./app run --urls "http://0.0.0.0:80"
-    volumes:
-      - ./aspnet/webapi:/app
-    ports:
-      - "8002:80"
-    networks:
-      - lagfsd
+  # aspnet:
+  #   container_name: aspnet
+  #   image: "mcr.microsoft.com/dotnet/sdk:7.0"
+  #   restart: unless-stopped
+  #   command: dotnet watch --project ./app run --urls "http://0.0.0.0:80"
+  #   volumes:
+  #     - ./aspnet/webapi:/app
+  #   ports:
+  #     - "8002:80"
+  #   networks:
+  #     - lagfsd
 
   # aspnet-db:
   #   container_name: aspnet-db
@@ -56,22 +56,23 @@ services:
   #   networks:
   #     - lagfsd
 
-  # springboot:
-  #   container_name: springboot
-  #   image: springboot
-  #   restart: unless-stopped
-  #   working_dir: /var/www/
-  #   build:
-  #     context: ./springboot
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ./springboot:/app
-  #   ports:
-  #       - 8888:8888
-  #       - 8000:8000
-  #       - 80:80
-  #   networks:
-  #       - lagfsd
+  springboot:
+    container_name: springboot
+    image: springboot
+    restart: unless-stopped
+    working_dir: /app
+    build:
+      args:
+        user: wwwxkz
+        uid: 1000
+      context: ./springboot
+      dockerfile: Dockerfile
+    volumes:
+      - ./springboot:/app
+    ports:
+        - 8010:8080
+    networks:
+        - lagfsd
 
   # springboot-db:
   #   container_name: springboot-db
