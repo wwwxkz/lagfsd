@@ -1,0 +1,39 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Users.API.Models
+
+@model List<User>
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h1 class="bg-info text-white">Users</h1>
+<a class="btn btn-block btn-success" asp-action="New">Add a new User</a>
+<div>
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Action</th>
+            <th>Action</th>
+        </tr>
+        @foreach (User user in Model)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.FirstName</td>
+                <td>@user.LastName</td>
+                <td>
+                    <a asp-route-id="@user.Id" class="btn btn-block btn-dark" asp-action="Edit">Edit</a>
+                </td>
+                <td>
+                    <form asp-route-id="@user.Id" method="post" asp-action="Rem">
+                        <input class="btn-warning btn btn-block" value="Remove" type="submit" />
+                    </form>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

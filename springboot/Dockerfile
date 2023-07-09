@@ -28,4 +28,4 @@ RUN mkdir -p /home/$user && \
     chown -R $user:$user /home/$user
 USER $user
 
-ENTRYPOINT ["./mvnw","spring-boot:run"]
+ENTRYPOINT ["/bin/bash", "./mvnw","spring-boot:run"]

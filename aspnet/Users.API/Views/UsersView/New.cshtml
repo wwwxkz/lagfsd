@@ -1,0 +1,25 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Users.API.Models
+
+@model User
+
+@{
+    ViewData["Title"] = "Add User";
+}
+
+<h1 class="bg-info text-white">Add User</h1>
+<a class="btn btn-block btn-success" asp-action="Index">Show all Users</a>
+
+<div class="text-danger" asp-validation-sumarry="All"></div>
+
+<form enctype="application/x-www-form-urlencoded" method="post">
+    <div>
+        <label>First Name</label>
+        <input class="form-control-range" asp-for="FirstName" type="text" /><br />
+        <label>Last Name</label>
+        <input class="form-control-range" asp-for="LastName" type="text" /><br />
+        <label>Email</label>
+        <input class="form-control-range" asp-for="Email" type="text" /><br />
+        <input class="btn btn-secondary" value="Submit" type="submit" />
+    </div>   
+</form>

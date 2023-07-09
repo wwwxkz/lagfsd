@@ -32,47 +32,54 @@ services:
   #   networks:
   #     - lagfsd
 
-  # aspnet:
-  #   container_name: aspnet
-  #   image: "mcr.microsoft.com/dotnet/sdk:7.0"
-  #   restart: unless-stopped
-  #   command: dotnet watch --project ./app run --urls "http://0.0.0.0:80"
-  #   volumes:
-  #     - ./aspnet/webapi:/app
-  #   ports:
-  #     - "8002:80"
-  #   networks:
-  #     - lagfsd
-
-  # aspnet-db:
-  #   container_name: aspnet-db
-  #   image: "mcr.microsoft.com/mssql/server"
-  #   restart: unless-stopped    
-  #   environment:
-  #     SA_PASSWORD: ${SA_PASSWORD}
-  #     ACCEPT_EULA: ${ACCEPT_EULA}
-  #   ports:
-  #     - "11433:1433" 
-  #   networks:
-  #     - lagfsd
-
-  springboot:
-    container_name: springboot
-    image: springboot
+  aspnet:
+    container_name: aspnet
+    image: "mcr.microsoft.com/dotnet/sdk:7.0"
     restart: unless-stopped
-    working_dir: /app
-    build:
-      args:
-        user: wwwxkz
-        uid: 1000
-      context: ./springboot
-      dockerfile: Dockerfile
+    command: dotnet watch --project ./app run --urls "http://0.0.0.0:80" --framework net7.0
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=aspnet-db;Port=5432;Database=${ASPNET_DB_DATABASE};Username=${ASPNET_DB_USERNAME};Password=${ASPNET_DB_PASSWORD}"
     volumes:
-      - ./springboot:/app
+      - ./aspnet/Users.API:/app
     ports:
-        - 8010:8080
+      - "8002:80"
+    depends_on:
+      - aspnet-db
     networks:
-        - lagfsd
+      - lagfsd
+
+  aspnet-db:
+    container_name: aspnet-db
+    image: postgres:12
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432" 
+    networks:
+      - lagfsd
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # springboot:
+  #   container_name: springboot
+  #   image: springboot
+  #   restart: unless-stopped
+  #   working_dir: /app
+  #   build:
+  #     args:
+  #       user: wwwxkz
+  #       uid: 1000
+  #     context: ./springboot
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./springboot:/app
+  #   ports:
+  #       - 8010:8080
+  #   networks:
+  #       - lagfsd
 
   # springboot-db:
   #   container_name: springboot-db
@@ -212,3 +219,6 @@ services:
 networks:
   lagfsd:
     driver: bridge
+
+volumes:
+  pgdata: {}
