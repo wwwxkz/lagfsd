@@ -2,6 +2,11 @@
 
 Services:
 Altough services are designed to work with API Gateway and Django, they can be also run independently with their own UI.
+
+# Screenshots
+
+![](https://github.com/wwwxkz/lagfsd/blob/main/README/UML.drawio.png)
+
 ```
 Laravel     - Product       - 8001:80   - React/Bootstrap
 ASPNET      - User          - 8002:80   -
